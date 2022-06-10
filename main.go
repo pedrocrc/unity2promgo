@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/muravsky/gounity"
@@ -147,6 +146,8 @@ func main() {
 		}
 	}()
 
+	log.Print("Listening on /metrics")
+
 	http.Handle("/metrics", promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
-	log.Fatal(http.ListenAndServe(strconv.Itoa(exporter.Port), nil))
+	http.ListenAndServe((exporter.Port), nil)
 }
