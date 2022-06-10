@@ -1,9 +1,13 @@
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # unity2promgo
 Prometheus Exporter for DellEMC Unity
 
 Unity2Prom is a tool written in Go for exporting usage and performance metrics from Dell EMC Unity storage arrays to prometheus.
 
-For RestAPI connectivity to the different Unity arrays [gounity by Equelin](https://github.com/equelin/gounity.git) is used.
+For RestAPI connectivity to the different Unity arrays [gounity by Equelin (fork by muravsky)](https://github.com/muravsky/gounity.git) is used.
+
+This version support LUN polling to be able to match LUN names to ID's
 
 ## Configuration
 ### Configure the Exporter
@@ -15,6 +19,7 @@ Before starting the exporter it is required to update *config.json* with values 
     "interval": 60,
     "pools": true,
     "storage_resources": true,
+    "LUN": true,
     "metrics": ["sp_cifs_global_basic_writeBytesRate", "sp_cifs_smb1_usage_currentConnections","sp_net_device_pktsInRate","sp_net_device_pktsOut"]
   },
   "unitys": [
@@ -66,8 +71,8 @@ scrape_configs:
 ```
 
 ## Installation
-After installing go and cloning this repositroy it is requried to install the following go dependencies:
-- github.com/equelin/gounity
+After installing go and cloning this repositroy it is required to install the following go dependencies:
+- github.com/muravsky/gounity
 - github.com/prometheus/client_golang/prometheus
 - github.com/prometheus/client_golang/prometheus/promhttp
 
@@ -78,3 +83,32 @@ In the project base directory run
 **go build**
 **go run main.go utils.go unitycollector.go**
 
+## Docker
+Ensure that the configuration file you have is up-to-date and accurate with the metrics you want collected, the destination of your Unity array, and the credentials to connect to the array. Then you will be able to build the image.
+
+Build the image with the following command
+```
+docker build -t unity2promgo --network=host .
+```
+Run the container with the following command
+```
+docker run -d \
+        --name unity2promgo \
+        --restart=always \
+        --net=host \
+        unity2promgo
+```
+
+An alternative way to run the container would be to pull the image from dockerhub with the following command
+```
+docker pull cthiel42/unity2promgo (not current fork)
+```
+and then mount your configuration file to the container in your docker run command similar to below
+```
+docker run -d \
+        --name unity2promgo \
+        --restart=always 
+        --net=host \ 
+        -v /Path/to/config.json:/opt/unityexporter/config.json:ro \ 
+        cthiel42/unity2promgo
+```
