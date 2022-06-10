@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/equelin/gounity"
+	"github.com/muravsky/gounity"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -36,6 +36,26 @@ func main() {
 			)
 			poolMetrics = append(poolMetrics, poolMetric)
 			prometheus.WrapRegistererWith(prometheus.Labels{}, reg).MustRegister(poolMetric)
+		}
+	}
+
+	//Check if lun metrics are required
+	lunMetrics := make([]*prometheus.GaugeVec, 0)
+	if exporter.LUN {
+		labels := []string{"unity", "id", "name"}
+		lunFields := []string{"sizeTotal"}
+		for _, field := range lunFields {
+			lunMetric := prometheus.NewGaugeVec(
+				prometheus.GaugeOpts{
+					//Namespace: "our_company",
+					//Subsystem: "blob_storage",
+					Name: "lun_" + field + "_" + "bytes",
+					Help: "Bytes of lun " + field,
+				},
+				labels,
+			)
+			lunMetrics = append(lunMetrics, lunMetric)
+			prometheus.WrapRegistererWith(prometheus.Labels{}, reg).MustRegister(lunMetric)
 		}
 	}
 
@@ -97,7 +117,7 @@ func main() {
 		}
 		session.CloseSession()
 		log.Print("main.go:main - Unity Name: " + u.Name)
-		unityCollectors = append(unityCollectors, NewUnityCollector(u, selectedMetrics, exporter, poolMetrics, storageMetrics))
+		unityCollectors = append(unityCollectors, NewUnityCollector(u, selectedMetrics, exporter, poolMetrics, lunMetrics, storageMetrics))
 	}
 
 	log.Print(len(unityCollectors))
@@ -113,6 +133,9 @@ func main() {
 				//log.Print(uc.Unity.Name)
 				if exporter.Pools {
 					uc.CollectPoolMetrics()
+				}
+				if exporter.LUN {
+					uc.CollectLUNMetrics()
 				}
 				if exporter.StorageResources {
 					uc.CollectStorageResourceMetrics()

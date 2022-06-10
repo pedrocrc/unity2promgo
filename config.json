@@ -2,8 +2,9 @@
   "exporter": {
     "port":     8080,
     "interval": 60,
-    "pools": false,
-    "storage_resources": false,
+    "pools": true,
+	"LUN": true,
+    "storage_resources": true,
     "metrics": [
 		"sp_blockCache_global_summary_cleanPages",
 		"sp_blockCache_global_summary_dirtyBytes",

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/equelin/gounity"
+	"github.com/muravsky/gounity"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -109,13 +109,14 @@ type UnityCollector struct {
 	Metrics        []Metric
 	Exporter       Exporter
 	PoolMetrics    []*prometheus.GaugeVec
+	LUNMetrics    []*prometheus.GaugeVec
 	StorageMetrics []*prometheus.GaugeVec
 }
 
 //NewUnityCollector wraps the Unity and Metrics into a collector
 func NewUnityCollector(u Unity, ms []Metric, e Exporter, pm []*prometheus.GaugeVec, sm []*prometheus.GaugeVec) UnityCollector {
 	log.Print("unityCollector.go:NewUnityCollector - Unity: " + u.Name)
-	uc := UnityCollector{Metrics: ms, Unity: u, Exporter: e, PoolMetrics: pm, StorageMetrics: pm}
+	uc := UnityCollector{Metrics: ms, Unity: u, Exporter: e, PoolMetrics: pm, LUNMetrics: pm, StorageMetrics: pm}
 
 	return uc
 }
@@ -201,6 +202,25 @@ func (uc UnityCollector) CollectPoolMetrics() {
 				uc.PoolMetrics[1].WithLabelValues(labels...).Set(float64(p.Content.SizeTotal))
 				uc.PoolMetrics[2].WithLabelValues(labels...).Set(float64(p.Content.SizeUsed))
 				uc.PoolMetrics[3].WithLabelValues(labels...).Set(float64(p.Content.SizeSubscribed))
+			}
+		}
+	}()
+}
+
+func (uc UnityCollector) CollectLUNMetrics() {
+	go func() {
+		//Slice of all realtime metrics in order to be possible to handle them in one request
+		LUNs, err := uc.Unity.Session.GetLUN()
+		log.Print(LUNs)
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			for _, p := range LUNs.Entries {
+				labels := make([]string, 0)
+				labels = append(labels, uc.Unity.Name)
+				labels = append(labels, p.Content.ID)
+				labels = append(labels, p.Content.Name)
+				uc.LUNMetrics[1].WithLabelValues(labels...).Set(float64(p.Content.SizeTotal))
 			}
 		}
 	}()
