@@ -54,5 +54,6 @@ type Exporter struct {
 	Interval         int      `json:"interval"`
 	Metrics          []string `json:"metrics"`
 	Pools            bool     `json:"pools"`
+	LUN            	 bool     `json:"LUN"`
 	StorageResources bool     `json:"storage_resources"`
 }
