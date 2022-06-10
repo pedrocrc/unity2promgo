@@ -109,14 +109,14 @@ type UnityCollector struct {
 	Metrics        []Metric
 	Exporter       Exporter
 	PoolMetrics    []*prometheus.GaugeVec
-	LUNMetrics    []*prometheus.GaugeVec
+	LUNMetrics     []*prometheus.GaugeVec
 	StorageMetrics []*prometheus.GaugeVec
 }
 
 //NewUnityCollector wraps the Unity and Metrics into a collector
-func NewUnityCollector(u Unity, ms []Metric, e Exporter, pm []*prometheus.GaugeVec, sm []*prometheus.GaugeVec) UnityCollector {
+func NewUnityCollector(u Unity, ms []Metric, e Exporter, pm []*prometheus.GaugeVec, lm []*prometheus.GaugeVec, sm []*prometheus.GaugeVec) UnityCollector {
 	log.Print("unityCollector.go:NewUnityCollector - Unity: " + u.Name)
-	uc := UnityCollector{Metrics: ms, Unity: u, Exporter: e, PoolMetrics: pm, LUNMetrics: pm, StorageMetrics: pm}
+	uc := UnityCollector{Metrics: ms, Unity: u, Exporter: e, PoolMetrics: pm, LUNMetrics: lm, StorageMetrics: sm}
 
 	return uc
 }
