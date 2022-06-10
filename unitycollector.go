@@ -237,7 +237,7 @@ func (uc UnityCollector) CollectLUNMetrics() {
 				labels = append(labels, uc.Unity.Name)
 				labels = append(labels, p.Content.ID)
 				labels = append(labels, p.Content.Name)
-				uc.LUNMetrics[1].WithLabelValues(labels...).Set(float64(p.Content.SizeTotal))
+				uc.LUNMetrics[0].WithLabelValues(labels...).Set(float64(p.Content.SizeTotal))
 			}
 		}
 	}()
