@@ -1,4 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Docker Pulls](https://img.shields.io/docker/pulls/muravsky/unity2promgo.svg?maxAge=604800)](https://hub.docker.com/r/muravsky/unity2promgo/)
 
 # unity2promgo
 Prometheus Exporter for DellEMC Unity
@@ -101,7 +102,7 @@ docker run -d \
 
 An alternative way to run the container would be to pull the image from dockerhub with the following command
 ```
-docker pull cthiel42/unity2promgo (not current fork)
+docker pull muravsky/unity2promgo
 ```
 and then mount your configuration file to the container in your docker run command similar to below
 ```
@@ -110,5 +111,5 @@ docker run -d \
         --restart=always 
         --net=host \ 
         -v /Path/to/config.json:/opt/unityexporter/config.json:ro \ 
-        cthiel42/unity2promgo
+        muravsky/unity2promgo
 ```
