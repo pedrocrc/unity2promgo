@@ -12,10 +12,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-       TAG: $(date +%s)
     steps:
     - uses: actions/checkout@v3
+    - name: get publish tag
+      id: tag
+      run: echo "docker_tag=$(date +%s)" >> $GITHUB_OUTPUT
     - name: docker login
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
@@ -25,9 +26,11 @@ jobs:
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        TAG: ${{steps.tag.outputs.docker_tag}}
       run: docker build . --file Dockerfile --tag $DOCKER_USER/unity2promgo:$TAG
     - name: Docker Push
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        TAG: ${{steps.tag.outputs.docker_tag}}
       run: docker push $DOCKER_USER/unity2promgo:$TAG
