@@ -1,11 +1,11 @@
-FROM golang:latest as builder
+FROM golang@sha256:0b55ab82ac2a54a6f8f85ec8b943b9e470c39e32c109b766bbc1b801f3fa8d3b as builder
 
 WORKDIR /opt/unityexporter
 COPY . .
 
 RUN go build main.go utils.go unitycollector.go
 
-FROM alpine:latest
+FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
 WORKDIR /opt/unityexporter
 COPY --from=builder /opt/unityexporter/main .
 

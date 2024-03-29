@@ -1,0 +1,14 @@
+FROM golang@sha256:0b55ab82ac2a54a6f8f85ec8b943b9e470c39e32c109b766bbc1b801f3fa8d3b as builder
+
+WORKDIR /opt/unityexporter
+COPY . .
+
+RUN go build main.go utils.go unitycollector.go
+
+FROM debian@sha256:d10f0545d14bad5f4d230301f7e4fd904384f2dd16fda16d708f936c2fa1db3e
+WORKDIR /opt/unityexporter
+COPY --from=builder /opt/unityexporter/main .
+
+EXPOSE 8080
+
+CMD ["./main"]
