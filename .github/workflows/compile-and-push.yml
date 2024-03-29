@@ -46,3 +46,11 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         TAG: ${{steps.tag.outputs.docker_tag}}
       run: docker push $DOCKER_USER/unity2promgo:debian$TAG
+    - name: Docker tag (alpine)
+      env:
+        TAG: ${{steps.tag.outputs.docker_tag}}
+      run: docker image tag $DOCKER_USER/unity2promgo:alpine$TAG $DOCKER_USER/unity2promgo:alpine
+    - name: Docker tag (debian)
+      env:
+        TAG: ${{steps.tag.outputs.docker_tag}}
+      run: docker image tag $DOCKER_USER/unity2promgo:debian$TAG $DOCKER_USER/unity2promgo:debian
