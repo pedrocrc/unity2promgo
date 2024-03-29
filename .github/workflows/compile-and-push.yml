@@ -20,6 +20,12 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{DOCKER_USER}}/unity2promgo:$(date +%s)
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker build . --file Dockerfile --tag $DOCKER_USER/unity2promgo:$(date +%s)
     - name: Docker Push
-      run: docker push ${{DOCKER_USER}}/unity2promgo
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker push $DOCKER_USER/unity2promgo
