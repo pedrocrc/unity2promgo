@@ -1,14 +1,14 @@
-FROM golang:latest
+FROM golang:latest as builder
 
 WORKDIR /opt/unityexporter
 COPY . .
 
-#RUN GO111MODULE=off go get -u github.com/muravsky/gounity
-#RUN GO111MODULE=off go get -u github.com/prometheus/client_golang/prometheus
-#RUN GO111MODULE=off go get -u github.com/prometheus/client_golang/prometheus/promhttp
-
 RUN go build main.go utils.go unitycollector.go
+
+FROM alpine:latest
+WORKDIR /opt/unityexporter
+COPY --from=builder /opt/unityexporter/main .
 
 EXPOSE 8080
 
-ENTRYPOINT sh -c ./main
+CMD ["./main"]
