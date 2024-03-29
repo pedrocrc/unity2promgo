@@ -22,15 +22,27 @@ jobs:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - name: Build the Docker image
+    - name: Build the Docker image (alpine)
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker build . --file Dockerfile --tag $DOCKER_USER/unity2promgo:$TAG
-    - name: Docker Push
+      run: docker build . --file Dockerfile.x86_64.alpine --tag $DOCKER_USER/unity2promgo:alpine$TAG
+    - name: Build the Docker image (debian)
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker push $DOCKER_USER/unity2promgo:$TAG
+      run: docker build . --file Dockerfile.x86_64.debian --tag $DOCKER_USER/unity2promgo:debian$TAG
+    - name: Docker Push (alpine)
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        TAG: ${{steps.tag.outputs.docker_tag}}
+      run: docker push $DOCKER_USER/unity2promgo:alpine$TAG
+    - name: Docker Push (debian)
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        TAG: ${{steps.tag.outputs.docker_tag}}
+      run: docker push $DOCKER_USER/unity2promgo:debian$TAG
