@@ -26,29 +26,19 @@ jobs:
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker build . --file Dockerfile.x86_64.alpine --tag $DOCKER_USER/unity2promgo:alpine$TAG
+      run: docker build . --file Dockerfile.x86_64.alpine --tag $DOCKER_USER/unity2promgo:alpine$TAG --tag $DOCKER_USER/unity2promgo:alpine --tag $DOCKER_USER/unity2promgo:latest
     - name: Build the Docker image (debian)
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker build . --file Dockerfile.x86_64.debian --tag $DOCKER_USER/unity2promgo:debian$TAG
+      run: docker build . --file Dockerfile.x86_64.debian --tag $DOCKER_USER/unity2promgo:debian$TAG --tag $DOCKER_USER/unity2promgo:debian
     - name: Docker Push (alpine)
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker push $DOCKER_USER/unity2promgo:alpine$TAG
+      run: docker push $DOCKER_USER/unity2promgo:alpine$TAG && docker push $DOCKER_USER/unity2promgo:alpine &&  docker push $DOCKER_USER/unity2promgo:latest
     - name: Docker Push (debian)
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker push $DOCKER_USER/unity2promgo:debian$TAG
-    - name: Docker tag (alpine)
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker image tag $DOCKER_USER/unity2promgo:alpine$TAG $DOCKER_USER/unity2promgo:alpine
-    - name: Docker tag (debian)
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker image tag $DOCKER_USER/unity2promgo:debian$TAG $DOCKER_USER/unity2promgo:debian
+      run: docker push $DOCKER_USER/unity2promgo:debian$TAG && docker push $DOCKER_USER/unity2promgo:debian
