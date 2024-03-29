@@ -7,6 +7,7 @@ Unity2Prom is a tool written in Go for exporting usage and performance metrics f
 
 For RestAPI connectivity to the different Unity arrays [gounity by Equelin (fork by muravsky)](https://github.com/muravsky/gounity.git) is used.
 Modifications related to Docker incorporated from [cthiel42](https://github.com/cthiel42/unity2promgo/)
+Modifications related to compile go code at docker build phase from [pedrocrc](https://github.com/pedrocrc)
 
 This version support LUN polling to be able to match LUN names to ID's
 
@@ -72,24 +73,25 @@ scrape_configs:
 ```
 
 ## Installation
-After installing go and cloning this repositroy it is required to install the following go dependencies:
-- github.com/muravsky/gounity
-- github.com/prometheus/client_golang/prometheus
-- github.com/prometheus/client_golang/prometheus/promhttp
 
-This can be done using go *get -u <dependency_name>*
+*Compile the collector*
+In the project base directory run
+**go build main.go utils.go unitycollector.go**
 
 *Start the collector*
 In the project base directory run
-**go build**
-**go run main.go utils.go unitycollector.go**
+**./main**
 
 ## Docker
 Ensure that the configuration file you have is up-to-date and accurate with the metrics you want collected, the destination of your Unity array, and the credentials to connect to the array. Then you will be able to build the image.
 
-Build the image with the following command
+Build the image with the following command (alpine)
 ```
-docker build -t unity2promgo --network=host .
+docker build . --file Dockerfile.x86_64.alpine --tag unity2promgo
+```
+Build the image with the following command (debian)
+```
+docker build . --file Dockerfile.x86_64.debian --tag unity2promgo
 ```
 Run the container with the following command
 ```
@@ -102,7 +104,7 @@ docker run -d \
 
 An alternative way to run the container would be to pull the image from dockerhub with the following command
 ```
-docker pull muravsky/unity2promgo
+docker pull pedrocrc/unity2promgo:alpine
 ```
 and then mount your configuration file to the container in your docker run command similar to below
 ```
@@ -111,5 +113,5 @@ docker run -d \
         --restart=always 
         --net=host \ 
         -v /Path/to/config.json:/opt/unityexporter/config.json:ro \ 
-        muravsky/unity2promgo
+        pedrocrc/unity2promgo:alpine
 ```
