@@ -1,14 +1,16 @@
-FROM golang@sha256:0b55ab82ac2a54a6f8f85ec8b943b9e470c39e32c109b766bbc1b801f3fa8d3b as builder
+FROM    golang@sha256:0b55ab82ac2a54a6f8f85ec8b943b9e470c39e32c109b766bbc1b801f3fa8d3b as builder
 
 WORKDIR /opt/unityexporter
-COPY . .
+COPY    . .
 
-RUN go build main.go utils.go unitycollector.go
+RUN     go build main.go utils.go unitycollector.go
 
-FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+FROM    alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+USER    1000
+RUN     mkdir -p /opt/unityexporter
 WORKDIR /opt/unityexporter
-COPY --from=builder /opt/unityexporter/main .
-RUN chmod uga+x /opt/unityexporter/main
-EXPOSE 8080
+COPY    --from=builder /opt/unityexporter/main /opt/unityexporter/main
+RUN     chown -R 1000 /opt/unityexporter && chmod uga+x /opt/unityexporter/main
+EXPOSE  8080
 
-CMD ["/opt/unityexporter/main"]
+CMD     ["/opt/unityexporter/main"]
