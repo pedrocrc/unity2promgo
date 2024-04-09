@@ -11,4 +11,4 @@ COPY --from=builder /opt/unityexporter/main .
 
 EXPOSE 8080
 
-CMD ["./main"]
+CMD ["/opt/unityexporter/main"]
