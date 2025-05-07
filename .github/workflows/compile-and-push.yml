@@ -22,13 +22,13 @@ jobs:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - name: Build the Docker image (debian)
+    - name: Build the Docker image (scratch)
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker build . --file Dockerfile.x86_64.debian --tag $DOCKER_USER/unity2promgo:debian$TAG --tag $DOCKER_USER/unity2promgo:debian --tag $DOCKER_USER/unity2promgo:latest
-    - name: Docker Push (debian)
+      run: docker build . --file Dockerfile.x86_64.scratch --tag $DOCKER_USER/unity2promgo:scratch$TAG --tag $DOCKER_USER/unity2promgo:scratch --tag $DOCKER_USER/unity2promgo:latest
+    - name: Docker Push (scratch)
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
         TAG: ${{steps.tag.outputs.docker_tag}}
-      run: docker push $DOCKER_USER/unity2promgo:debian$TAG && docker push $DOCKER_USER/unity2promgo:debian
+      run: docker push $DOCKER_USER/unity2promgo:scratch$TAG && docker push $DOCKER_USER/unity2promgo:scratch
