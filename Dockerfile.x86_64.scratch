@@ -9,7 +9,8 @@ RUN     CGO_ENABLED=0 GOOS=linux go build main.go utils.go unitycollector.go
 
 FROM    scratch
 WORKDIR /app
-COPY    --from=builder /opt/unityexporter/main /app/main
+COPY    --from=builder --chown=1000:1000 /opt/unityexporter/main /app/main
+USER    1000
 EXPOSE  8080
 
 CMD     ["/app/main"]
